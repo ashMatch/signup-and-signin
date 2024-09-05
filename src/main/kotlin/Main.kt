@@ -2,8 +2,11 @@ package org.example
 
 import org.example.Client.Client
 import org.mindrot.jbcrypt.BCrypt
+import org.xbill.DNS.*
+import org.slf4j.LoggerFactory
 
 
+val logger =  LoggerFactory.getLogger("DnsEmailChecker")
 
 fun mainMenu(clients:MutableList<Client>):Int{
     var option:Int
@@ -36,7 +39,8 @@ fun signUpSystem(clients:MutableList<Client>){
         email = readln()
     }
     if (isValidEmail(email)){
-        print("Email valido!\n")
+        print("Email valido!\nchecando se ele existe...")
+        dnsEmailChecking(email)
     }
     println("Digite uma senha: ")
     var password:String = readln()
@@ -100,6 +104,26 @@ fun isValidEmail(email:String): Boolean{
     return email.matches(regexEmail)
 }
 
+fun dnsEmailChecking(email:String){
+    try {
+        val lookup = Lookup(email, Type.MX)
+
+        // Faz a query e joga em uma variavel
+        val records = lookup.run()
+
+        if(lookup.result == Lookup.SUCCESSFUL){
+            // Processar os results
+            for (record in records)
+                println("Record: $record")
+        }
+        else {
+            println("Erro: ${lookup.errorString}")
+        }
+    } catch (e: Exception){
+        logger.error("Erro ao fazer a consulta DNS ", e)
+    }
+
+}
 fun main() {
     val clients:MutableList<Client> = mutableListOf()
     mainMenu(clients)
