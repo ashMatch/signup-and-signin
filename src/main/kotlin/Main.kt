@@ -30,13 +30,21 @@ fun signUpSystem(clients:MutableList<Client>){
     var name:String = readln()
     println("Digite um email: ")
     var email:String = readln()
+    while (!isValidEmail(email)){
+        println("Email inválido, informe um email válido")
+        println("Digite um email: ")
+        email = readln()
+    }
+    if (isValidEmail(email)){
+        print("Email valido!\n")
+    }
     println("Digite uma senha: ")
     var password:String = readln()
     if(isValidPassword(password)){
 
         //Atualiza a variavel password com o hash retornado
-        password = addHashEncryptBCryp(password)
-        var client = Client(name, email, password)
+        password = addHashEncryptBCrypt(password)
+        val client = Client(name, email, password)
         println("Senha válida")
         clients.add(client)
         clients.forEach{it -> println("""
@@ -53,10 +61,8 @@ fun signUpSystem(clients:MutableList<Client>){
     }
 }
 
-fun addHashEncryptBCryp(password: String):String {
-    // implementação simples na doc https://www.javadoc.io/doc/org.mindrot/jbcrypt/0.4/org/mindrot/jbcrypt/BCrypt.html
-    return BCrypt.hashpw(password, BCrypt.gensalt())
-}
+// implementação simples na doc https://www.javadoc.io/doc/org.mindrot/jbcrypt/0.4/org/mindrot/jbcrypt/BCrypt.html
+fun addHashEncryptBCrypt(password: String):String = BCrypt.hashpw(password, BCrypt.gensalt())
 
 fun isValidPassword(password:String): Boolean{
     //Verify if there is a space
@@ -86,6 +92,12 @@ fun isValidPassword(password:String): Boolean{
 
     return false
 
+}
+
+fun isValidEmail(email:String): Boolean{
+    val regexEmail = Regex("^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$")
+
+    return email.matches(regexEmail)
 }
 
 fun main() {
