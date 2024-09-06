@@ -106,24 +106,54 @@ fun isValidEmail(email:String): Boolean{
 
 fun dnsEmailChecking(email:String){
     try {
-        val lookup = Lookup(email, Type.MX)
+        // Extrair o domínio do e-mail
+        val domain = email.substringAfter('@')
+
+        val lookup = Lookup(domain, Type.MX)
 
         // Faz a query e joga em uma variavel
         val records = lookup.run()
 
         if(lookup.result == Lookup.SUCCESSFUL){
-            // Processar os results
-            for (record in records)
-                println("Record: $record")
+
+            //Verifica se há registros MX
+            if(records != null && records.isNotEmpty()){
+                //Itera sobre os registros e valida
+                for (record in records){
+                    val mxRecord = record as MXRecord
+                    println("MX Record: Host=${mxRecord.target}, Prioridade=${mxRecord.priority}")
+
+                    //Exemplo simples de verificação: Você pode validar o domínio do MX Record
+                    if(isMXRecordValid(mxRecord.target.toString())){
+                        println("MX Record válido encontrado!")
+                    } else {
+                        println("MX Record inválido ou suspeito: ${mxRecord.target}")
+                    }
+
+                }
+
+            } else{
+                println("Nenhum registro MX encontrado para o dominio")
+
+            }
+
         }
         else {
-            println("Erro: ${lookup.errorString}")
+            println("Erro: Deu ruim irmao")
+
         }
     } catch (e: Exception){
         logger.error("Erro ao fazer a consulta DNS ", e)
     }
 
 }
+
+// função simples para a validação dos resgistros MX (modifique conforme necessidade)
+fun isMXRecordValid(host: String): Boolean {
+    // Exemplo: Verifica se o dominio do MX Record não é vazio e contém um ponto
+    return host.isNotEmpty() && host.contains(".")
+}
+
 fun main() {
     val clients:MutableList<Client> = mutableListOf()
     mainMenu(clients)
