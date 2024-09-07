@@ -4,9 +4,18 @@ import org.example.Client.Client
 import org.mindrot.jbcrypt.BCrypt
 import org.xbill.DNS.*
 import org.slf4j.LoggerFactory
+import org.xbill.DNS.Message
+import java.util.Properties
+import javax.mail.*
+import javax.mail.Message.RecipientType
+import javax.mail.internet.*
 
 
 val logger =  LoggerFactory.getLogger("DnsEmailChecker")
+var recipient = ""
+val subject = "Confirmação do Registro"
+val body = "Olá, este é um e-mail de confirmação. Por favor, confirme seu e-mail."
+
 
 fun mainMenu(clients:MutableList<Client>):Int{
     var option:Int
@@ -50,6 +59,7 @@ fun signUpSystem(clients:MutableList<Client>){
         password = addHashEncryptBCrypt(password)
         val client = Client(name, email, password)
         println("Senha válida")
+        sendValidationEmail(email, subject, body)
         clients.add(client)
         clients.forEach{it -> println("""
             nome: ${it.name}:
@@ -152,6 +162,41 @@ fun dnsEmailChecking(email:String){
 fun isMXRecordValid(host: String): Boolean {
     // Exemplo: Verifica se o dominio do MX Record não é vazio e contém um ponto
     return host.isNotEmpty() && host.contains(".")
+}
+
+fun sendValidationEmail(to:String, subject:String, body:String){
+
+    //Configuração do servidor SMTP
+    val properties = Properties().apply {
+        put("mail.smtp.host", "smtp.gmail.com")
+        put("mail.smtp.port", "587")
+        put("mail.smtp.auth", "true")
+        put("mail.smtp.starttls.enable", "true")
+    }
+
+    //Autenticação
+    var session = Session.getInstance(properties, object : Authenticator() {
+        override fun getPasswordAuthentication(): PasswordAuthentication{
+            return PasswordAuthentication("email remetente", "senha do email")
+        }
+    })
+
+    try {
+        //Criação da mensagem
+        var message = MimeMessage(session).apply{
+            setFrom(InternetAddress("email remetente"))
+            setRecipients(RecipientType.TO, InternetAddress.parse(to))
+            setSubject(subject)
+            setText(body)
+        }
+
+        //Envio do email
+        Transport.send(message)
+        println("Email enviado com sucesso para $to")
+    } catch (e: MessagingException){
+        e.printStackTrace()
+    }
+
 }
 
 fun main() {

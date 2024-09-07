@@ -16,8 +16,13 @@ dependencies {
     implementation("org.slf4j:slf4j-api:2.0.16")
     // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic
     testImplementation("ch.qos.logback:logback-classic:1.5.7")
+
+    implementation("org.slf4j:slf4j-nop:2.0.16")
+
     // https://mvnrepository.com/artifact/javax.mail/javax.mail-api
     implementation("javax.mail:javax.mail-api:1.6.2")
+
+    implementation("com.sun.mail:javax.mail:1.6.2")
 
 
 
