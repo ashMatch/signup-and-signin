@@ -24,9 +24,10 @@ dependencies {
 
     implementation("com.sun.mail:javax.mail:1.6.2")
 
-
-
     testImplementation("org.jetbrains.kotlin:kotlin-test")
+    // https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
+
 
 }
 

@@ -164,6 +164,15 @@ fun isMXRecordValid(host: String): Boolean {
     return host.isNotEmpty() && host.contains(".")
 }
 
+fun generateRandomNumberEmailConfirmation(): String{
+    val rand = (1..99).random()
+    if (rand <10){
+        print("0")
+    }
+    print(rand)
+    return rand.toString()
+}
+
 fun sendValidationEmail(to:String, subject:String, body:String){
 
     //Configuração do servidor SMTP
