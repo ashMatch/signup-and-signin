@@ -49,7 +49,11 @@ fun signUpSystem(clients:MutableList<Client>){
     }
     if (isValidEmail(email)){
         print("Email valido!\nchecando se ele existe...")
-        dnsEmailChecking(email)
+        var isEmailInDatabase = emailIntheDatabase(clients, email)
+        if (isEmailInDatabase) {
+            println("email já cadastrado! entre e acesse a sua conta")
+        }
+        else dnsEmailChecking(email)
     }
     println("Digite uma senha: ")
     var password:String = readln()
@@ -73,6 +77,18 @@ fun signUpSystem(clients:MutableList<Client>){
         signUpSystem(clients)
 
     }
+}
+
+fun emailIntheDatabase(clients: List<Client>, email: String):Boolean {
+    var founMatch = false
+    for (client in clients){
+        if (client.email == email){
+            founMatch = true
+            break
+        } else founMatch = false
+    }
+
+    return founMatch
 }
 
 // implementação simples na doc https://www.javadoc.io/doc/org.mindrot/jbcrypt/0.4/org/mindrot/jbcrypt/BCrypt.html
