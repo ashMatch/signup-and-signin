@@ -202,14 +202,14 @@ fun sendValidationEmail(to:String, subject:String, body:String){
     //Autenticação
     var session = Session.getInstance(properties, object : Authenticator() {
         override fun getPasswordAuthentication(): PasswordAuthentication{
-            return PasswordAuthentication("email remetente", "senha do email")
+            return PasswordAuthentication(addSenderEmailAndPassword()[0], addSenderEmailAndPassword()[1])
         }
     })
 
     try {
         //Criação da mensagem
         var message = MimeMessage(session).apply{
-            setFrom(InternetAddress("email remetente"))
+            setFrom(InternetAddress(to))
             setRecipients(RecipientType.TO, InternetAddress.parse(to))
             setSubject(subject)
             setText(body)
